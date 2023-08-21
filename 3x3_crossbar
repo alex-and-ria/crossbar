@@ -1,0 +1,88 @@
+*3x3 crossbar
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.param R_wl=5
+.param R_bl=5
+.param R_11=1000 R_12=1000 R_13=1000
+.param R_21=1000 R_22=1000 R_23=1000
+.param R_31=1000 R_32=1000 R_33=1000
+.param V_1=10 V_2=10 V_3=10
+
+
+*circuit
+V1 1 0 V_1
+V2 2 0 V_2
+V3 3 0 V_3
+
+Rw11 1 4 R_wl
+Rw21 2 5 R_wl
+Rw31 3 6 R_wl
+R11 4 7 R_11
+R21 5 8 R_21
+R31 6 9 R_31
+Rb11 7 8 R_bl
+Rb21 8 9 R_bl
+Rb31 9 0 R_bl
+
+Rw12 4 10 R_wl
+Rw22 5 11 R_wl
+Rw32 6 12 R_wl
+R12 10 13 R_12
+R22 11 14 R_22
+R32 12 15 R_32
+Rb12 13 14 R_bl
+Rb22 14 15 R_bl
+Rb32 15 0 R_bl
+
+Rw13 10 16 R_wl
+Rw23 11 17 R_wl
+Rw33 12 18 R_wl
+R13 16 19 R_13
+R23 17 20 R_23
+R33 18 21 R_33
+Rb13 19 20 R_bl
+Rb23 20 21 R_bl
+Rb33 21 0 R_bl
+
+
+
+
+* 33 *
+
+
+
+.OP
+
+
+
+
+.END
