@@ -32,4 +32,5 @@ R33 18 21 1000
 Rbl33 21 0 5
 * 33 *
 .OP
+.OPTION post
 .END

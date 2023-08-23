@@ -1,0 +1,8 @@
+. /usr/local/3rdparty/cad_setup_files/altera.bash
+vsim
+. /usr/local/3rdparty/cad_setup_files/altera.bash
+. /share/reconfig/cad_setup_files/altera.bash
+/share/reconfig/synopsys/cscope64/P-2019.06/ai_bin/scope
+/share/reconfig/synopsys/hspice/P-2019.06-2/hspice/bin/hspice
+
+/share/reconfig/synopsys/cscope64/P-2019.06/ai_bin/scope

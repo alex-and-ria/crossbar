@@ -100,6 +100,8 @@ int main(){
 		hspice_gen<<data_buff;
 		sprintf((char*)data_buff,"\n.OP");//compute the DC operating points;
 		hspice_gen<<data_buff;
+		sprintf((char*)data_buff,"\n.OPTION post");//compute the DC operating points;
+		hspice_gen<<data_buff;
 		sprintf((char*)data_buff,"\n.END");
 		hspice_gen<<data_buff;
 		
