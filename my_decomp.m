@@ -1,4 +1,4 @@
-
+                                                                                                                                                                                                                            
 
 
 
@@ -46,6 +46,10 @@ varargout = cell(1,nargout-1);
 
         case 'LDL^T'
             disp('LDL^T decomp');
+        case 'LU_Dltl'
+            disp('dltl')
+            LU = LUDecompDoolittle(M);
+            varargout{1} = LU;
         otherwise
             disp('unknown decomp');
     end
@@ -60,7 +64,7 @@ U=zeros(dim_m,dim_m);
 %   U1(1,:)=M(1,:); %first row of U is same as first row of M;
 U(1,:)=M(1,:); %first row of U is same as first row of M;
 P=1:dim_m; %initially permetation is just identity;
-v_swp=zeros(dim_m,1);
+%v_swp=zeros(dim_m,1);
 
 for(kk=1:dim_m)
 % for(jj=kk:dim_m)%prepare next row of U for next iteration;
@@ -95,6 +99,18 @@ end
 end
 
 
-
+function LU = LUDecompDoolittle(A)
+    n = length(A);
+    LU = A;
+    % decomposition of matrix, Doolittle's Method
+    for i = 1:1:n
+        for j = 1:(i - 1)
+            LU(i,j) = (LU(i,j) - LU(i,1:(j - 1))*LU(1:(j - 1),j)) / LU(j,j);
+        end
+        j = i:n;
+        LU(i,j) = LU(i,j) - LU(i,1:(i - 1))*LU(1:(i - 1),j);
+    end
+    %LU = L+U-I
+end
 
 

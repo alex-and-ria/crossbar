@@ -47,13 +47,14 @@ parse_ifn=q.lis
 matlab_ifn=q.m #matlab template file name; should be in the folder;
 matlab_ofn=q1.m #generated matlab source file;
 output_log_fn=q_out.txt #file to output results;
-
+log_fl=log_fl.txt
 echo "" > "$output_log_fn" #clear log_file;
+fl=0
 
-for((M=2;M<=512;M*=2)) do
-for((N=2;N<=256;N*=2)) do
+for((M=8;M<=8;M*=2)) do
+for((N=8;N<=8;N*=2)) do
 echo -e "*****\n" >> "$output_log_fn"
-for((ii=0;ii<10;ii++)) do
+for((ii=0;ii<1;ii++)) do
 
 g++ $gen_file$lang_ext -o $gen_file #compile hspice file generator;
 gen_out=$(./$gen_file $M $N $N_swp) #command substitution; save command output to variable;
@@ -88,6 +89,11 @@ export SNPSLMD_LICENSE_FILE=27020@saratoga.cse.sc.edu
 #export PATH="/share/reconfig/synopsys/hspice/P-2019.06-2/hspice/bin:$PATH" #hspice
 #export PATH="/share/reconfig/synopsys/cscope64/P-2019.06/ai_bin:$PATH" #scope;
 /share/reconfig/synopsys/hspice/P-2019.06-2/hspice/bin/hspice "${gen_out_fn_arr[2]}" > "$parse_ifn"
+echo -e "\n\n$m $n ">>"$log_fl"
+if [ "$fl" -eq "0" ] 
+then cat "$parse_ifn" >"$log_fl"
+ else cat "$parse_ifn" >>"$log_fl"; let "$fl=1";
+  fi
 hspice_jtr=$(cat "$parse_ifn" | grep "job total runtime")
 cd ..
 

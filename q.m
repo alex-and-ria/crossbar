@@ -119,33 +119,54 @@ end
 %tic(); y= Gm\(Ivec'); toc();
 %times_v=zeros(1,4);
 %fprintf("m=%d; n=%d; N_swp=%d;\n",m,n,N_swp);
-disp('lu'); %tic();
-    tic();[L,U,P] = lu(Gm); toc();
-disp('runs'); times_lu=0;
+lu_decomp_t=0; lu_solv_t=0; lu_max_abs_err=0;
+%disp('lu'); %tic();
+tic();[L,U,P] = lu(Gm); lu_decomp_t=toc();
+%disp('runs'); times_lu=0;
 for(kk=1:N_swp)
-    tic(); lu_y = L\(P*Ivec(kk)');
-    lu_x = U\lu_y; times_lu=times_lu+toc();
-end
-disp(times_lu);
-    %tic();lu_y = L\(P*Ivec(1)'); times_v(2)=toc();
-    %tic();lu_x = U\lu_y; times_v(3)=toc();
-%toc();
-%times_v(4)=sum(times_v); %toc();
-%times_v
-disp('ldl');
-    tic(); dA = decomposition(Gm,'ldl','upper'); toc();
-disp('runs'); times_ldl=0; max_abs_err=0.;
-for(kk=1:N_swp)
-    %disp(kk);
-    tic(); ldl_x_curr=dA\(Ivec(kk,:)'); times_ldl=times_ldl+toc();
-    if(max_abs_err<max(abs(ldl_x_curr'-HspcOut(kk,:))))
-        max_abs_err=max(abs(ldl_x_curr'-HspcOut(kk,:)));
+    tic(); lu_y = L\(P*Ivec(kk,:)');
+    lu_x = U\lu_y; lu_solv_t=lu_solv_t+toc();
+    if(lu_max_abs_err<max(abs(lu_x-HspcOut(kk,:)')))
+        lu_max_abs_err=max(abs(lu_x-HspcOut(kk,:)'));
     end
-    %figure(kk); plot(1:2*m*n,abs(ldl_x_curr'-HspcOut(kk,:)));
-
 end
-disp(times_ldl);
-fprintf("max_abs_err=%g\n", max_abs_err);
+%disp(times_lu);
+fprintf("lu_decomp_t=%g, lu_solv_t=%g, lu_max_abs_err=%g\n", lu_decomp_t,lu_solv_t,lu_max_abs_err);
+
+% disp('ldl');
+%     tic(); dA = decomposition(Gm,'ldl','upper'); toc();
+% disp('runs'); times_ldl=0; max_abs_err=0.;
+% for(kk=1:N_swp)
+%     %disp(kk);
+%     tic(); ldl_x_curr=dA\(Ivec(kk,:)'); times_ldl=times_ldl+toc();
+%     if(max_abs_err<max(abs(ldl_x_curr'-HspcOut(kk,:))))
+%         max_abs_err=max(abs(ldl_x_curr'-HspcOut(kk,:)));
+%     end
+%     %figure(kk); plot(1:2*m*n,abs(ldl_x_curr'-HspcOut(kk,:)));
+% 
+% end
+% disp(times_ldl);
+% fprintf("max_abs_err=%g\n", max_abs_err);
+
+lib_lu_decomp_t=0; lib_lu_solv_t=0; lib_lu_max_abs_err=0;
+tst_L=zeros(2*m*n,2*m*n); tst_U=zeros(2*m*n,2*m*n); tst_P=1:2*m*n;
+ptst_M=libpointer('doublePtr',full(Gm)'); ptst_L=libpointer('doublePtr',tst_L); ptst_U=libpointer('doublePtr',tst_U); ptst_P=libpointer('uint32Ptr',tst_P');
+loadlibrary('lu_ldl_t.so','lu_ldl_t.h');
+tic();
+    calllib('lu_ldl_t','gen_lu',ptst_M,ptst_L,ptst_U,2*m*n,0.00001,ptst_P);
+lib_lu_decomp_t=toc();
+L0=ptst_L.Value';U0=ptst_U.Value'; P0=ptst_P.Value';
+unloadlibrary('lu_ldl_t');
+for(kk=1:N_swp)
+    tic(); lib_lu_y = L0\(Ivec(kk,P0)');
+    lib_lu_x = U0(:,P0)\lib_lu_y(P0); lib_lu_solv_t=lib_lu_solv_t+toc();
+    if(lib_lu_max_abs_err<max(abs(lib_lu_x-HspcOut(kk,P0)')))
+        lib_lu_max_abs_err=max(abs(lib_lu_x-HspcOut(kk,P0)'));
+    end
+end
+%disp(times_lu);
+fprintf("lib_lu_decomp_t=%g, lib_lu_solv_t=%g, lib_lu_max_abs_err=%g\n", lib_lu_decomp_t,lib_lu_solv_t,lib_lu_max_abs_err);
+
 
 %tic(); ldl_x2=dA\Ivec(2)'; toc();
 %figure(2); plot(1:2*m*n,abs(ldl_x2'-HspcOut(2,:)));

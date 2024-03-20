@@ -129,7 +129,9 @@ int main(int argc, char** argv){
 		
 		}
 		ofs<<"\n.ENDDATA";
-		ofs<<"\n.print DC V(*)";
+		ofs<<"\n.option post=2 POST_VERSION=2001";//set otput .sw0 in ASCII format;
+		ofs<<"\n.probe DC V(*)";//save probe results to .sw0 file;
+//		ofs<<"\n.print DC V(*)";
 		ofs<<"\n.END";
 		
 		
@@ -142,8 +144,6 @@ int main(int argc, char** argv){
 		std::cout<<"\nofn.is_open()";
 	
 	}
-	
-	
 	
 	
 	std::cout<<"\nCnds=[";
