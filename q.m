@@ -18,6 +18,12 @@
 
 
 
+%m=10;n=4;N_swp=5;data_fl_nm='tst.csv';
+Cnds=readmatrix(data_fl_nm,'FileType','text','Range',[2,1,m+1,n],'Delimiter',',','OutputType','double');
+Gwl=readmatrix(data_fl_nm,'FileType','text','Range',[m+3,1,m+3,1],'Delimiter',',','OutputType','double');
+Gbl=readmatrix(data_fl_nm,'FileType','text','Range',[m+5,1,m+5,1],'Delimiter',',','OutputType','double');
+Vin=readmatrix(data_fl_nm,'FileType','text','Range',[m+7,1,m+7+N_swp-1,m],'Delimiter',',','OutputType','double');
+HspcOut=readmatrix(data_fl_nm,'FileType','text','Range',[m+7+N_swp+1,1,m+7+N_swp+1+N_swp-1,2*m*n],'Delimiter',',','OutputType','double');
 
 %dim=16; %M=N=dim;%Cnds=sym('G',dim); Gwl=sym('Gwl'); Gbl=sym('Gbl');
 %Ivec=sym(zeros(1,2*dim*dim));
@@ -131,8 +137,8 @@ for(kk=1:N_swp)
     end
 end
 %disp(times_lu);
-%fprintf("lu_decomp_t=%g, lu_solv_t=%g, lu_max_abs_err=%g\n", lu_decomp_t,lu_solv_t,lu_max_abs_err);
-fprintf("%f %f ", lu_decomp_t,lu_solv_t);
+fprintf("lu_decomp_t=%g, lu_solv_t=%g, lu_max_abs_err=%g\n", lu_decomp_t,lu_solv_t,lu_max_abs_err);
+%fprintf("%f %f ", lu_decomp_t,lu_solv_t);
 
 
 % disp('ldl');
@@ -167,8 +173,8 @@ for(kk=1:N_swp)
     end
 end
 %disp(times_lu);
-%fprintf("lib_lu_decomp_t=%g, lib_lu_solv_t=%g, lib_lu_max_abs_err=%g\n", lib_lu_decomp_t,lib_lu_solv_t,lib_lu_max_abs_err);
-fprintf("%f %f\n", lib_lu_decomp_t,lib_lu_solv_t);
+fprintf("lib_lu_decomp_t=%g, lib_lu_solv_t=%g, lib_lu_max_abs_err=%g\n", lib_lu_decomp_t,lib_lu_solv_t,lib_lu_max_abs_err);
+%fprintf("%f %f\n", lib_lu_decomp_t,lib_lu_solv_t);
 
 else
 fprintf("%f %f\n", 0,0);

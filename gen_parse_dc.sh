@@ -48,6 +48,7 @@ hsp_gen_f_ext=.sw0
 parse_ifn=q.lis
 matlab_ifn=q.m #matlab template file name; should be in the folder;
 matlab_ofn=q1.m #generated matlab source file;
+matlab_data_fl=gtrd_data.csv
 output_log_fn=q_out.txt #file to output results;
 log_fl=log_fl.txt
 echo "" > "$output_log_fn" #clear log_file;
@@ -63,7 +64,7 @@ lib_lu_stat_d=0; lib_lu_stat_sol=0;
 for((ii=0;ii<n_stat;ii++)) do
 
 g++ $gen_file$lang_ext -o $gen_file #compile hspice file generator;
-gen_out=$(./$gen_file $M $N $N_swp) #command substitution; save command output to variable;
+gen_out=$(./$gen_file $M $N $N_swp $matlab_data_fl) #command substitution; save command output to variable;
 
 
 
@@ -106,9 +107,9 @@ cd ..
 #pwd
 
 g++ $parse_file$lang_ext -o $parse_file #compile hspice file generator;
-parse_out=$(./$parse_file $M $N $N_swp "./${gen_out_fn_arr[1]}/${gen_out_fn_arr[2]}$hsp_gen_f_ext") #command substitution; save command output to variable;
+parse_out=$(./$parse_file $M $N $N_swp "./${gen_out_fn_arr[1]}/${gen_out_fn_arr[2]}$hsp_gen_f_ext" $matlab_data_fl) #command substitution; save command output to variable;
 
-echo -e "m=$M; n=$N; ${gen_out_arr[0]}\n$parse_out" > "$matlab_ofn"
+echo -e "m=$M; n=$N; N_swp=$N_swp; data_fl_nm='$matlab_data_fl';" > "$matlab_ofn"
 cat "$matlab_ifn" >> "$matlab_ofn"
 
 matlab_out=$(~/abc/matlab/bin/matlab -batch "${matlab_ofn%.m}") #remove extension ".m" from $matlab_ofn file name and run matlab for this file in batch mode;

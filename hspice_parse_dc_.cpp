@@ -34,48 +34,43 @@
 #include<fstream>//fstream
 #include<cstring>//strcmp
 #include <stdlib.h>/* strtod */
+#include <limits>//setprecision;
+#include <iomanip>//setprecision;
 
-//#define M 3
-//#define N 2
-//#define N_swp 2
+//#define M 10
+//#define N 4
+//#define N_swp 5
 
-//#define ifn "hspice/3x2_2_dc_sweep_gen.sw0"
+//#define ifn "hspice/10x4_5_dc_sweep_gen.sw0"
+//#define data_fl_nm "tst.csv"
 #define buff_sz 128
 
 int main(int argc, char** argv){
-	unsigned int M,N,N_swp; char* ifn;
-	if(argc<5){
+	unsigned int M,N,N_swp; char* ifn; char* data_fl_nm;
+	if(argc<6){
 		std::cout<<"\nusage: [exec_name] M N N_swp ifn";
-	
+
 	}
 	else{
-		M=atoi(argv[1]); N=atoi(argv[2]); N_swp=atoi(argv[3]); ifn=argv[4];
+		M=atoi(argv[1]); N=atoi(argv[2]); N_swp=atoi(argv[3]); ifn=argv[4]; data_fl_nm=argv[5];
 
-	std::fstream ifs(ifn,std::ios::in|std::ios::binary);
+	std::fstream ifs(ifn,std::ios::in|std::ios::binary); std::fstream ofs_data;
 	char ifs_buff[buff_sz]={}, f_num_buff[buff_sz]; char q;
 	char* p_sub_str;
 	double **voltages=new double*[2*M*N];//define array on heap to avoid using all stack; parse only node voltages for memristors (2*M*N); Vin should be provided by hspice_gen_dc.cpp
 	for(unsigned int i=0;i<(2*M*N);i++){
 		voltages[i]=new double[N_swp];
-	
 	}
 	if(ifs.is_open()){
 		ifs>>ifs_buff;//ifs.getline(ifs_buff,buff_sz,' ');
 		while(strcmp(ifs_buff,"$&%#")!=0){//data starts after "$&%#" delimiter;
 			//std::cout<<"\nifs_buff="<<ifs_buff;
 			ifs>>ifs_buff;
-		
 		}
 		unsigned int nd_cnt=0,swp_cnt=0;
 		while(1){
 			ifs>>ifs_buff;
 			if(ifs.eof()) break;
-			
-			
-			
-			
-			
-			
 			p_sub_str=strtok(ifs_buff,"."); char frst_sgn[3];//should have first character which represents the sign ('0' for '+' or '-' for '-') of the number parsed, dot ('.') separator and terminating '\0' character for convenient usage of strcat;
 			frst_sgn[0]=p_sub_str[0]; frst_sgn[1]='.'; frst_sgn[2]='\0';
 			p_sub_str=strtok(NULL,".");//get the rest of the number and new sign character;
@@ -88,39 +83,43 @@ int main(int argc, char** argv){
 				p_sub_str=strtok(NULL,".");
 				if(p_sub_str!=NULL){//if it was not the last number in the line
 					f_num_buff[strlen(f_num_buff)-1]='\0';//clear the last character (which is the new frst_sgn of the new number);
-				
 				}
-				
-				
 				//std::cout<<"\nf_num_buff="<<f_num_buff<<"\tfrst_sgn="<<frst_sgn<<"\tp_sub_str="<<p_sub_str;
-				
 				//std::cout<<"\nf_num_buff="<<f_num_buff<<"\tfloat_val="<<strtod(f_num_buff,NULL);
-				
 				if(nd_cnt>=2 && nd_cnt<2*M*N+2){//first two numbers are skipped, corresponding node voltages start from the third number; after required voltages recorded, skip the rest of values until new sweep values;
 					voltages[nd_cnt-2][swp_cnt]=strtod(f_num_buff,NULL);
-				
 				}
 				if(nd_cnt==2+2*M*N+2*M-1){//first two values are skipped, 2*M*N node voltages should be recoreded, M voltages (input voltages) and M currents are skipped;
 					swp_cnt++; nd_cnt=0;
-				
 				}
 				else{
 					nd_cnt++;
-				
 				}
-				
-				
-				
 				//std::cin>>q;
 			
 			}
-			
-		
 		}
 		
 		
 		ifs.close();
+		unsigned int double_mp=std::numeric_limits<long double>::digits10 + 1;
+		ofs_data.open(data_fl_nm,std::ios_base::out|std::ios_base::app);
+		if(ofs_data.is_open()){
+			ofs_data<<std::setprecision(double_mp);
+			ofs_data<<"//HspcOut:\n";
+			for(unsigned int i=0;i<N_swp;i++){
+				for(unsigned int j=0;j<2*M*N-1;j++){//nodes 1 to 2*M*N-1;
+					ofs_data<<voltages[j][i]<<',';
+				}
+				ofs_data<<voltages[2*M*N-1][i]<<'\n';
+			}
+			ofs_data.close();
+		}
+		else{
+			std::cout<<"\nofs_data.is_open()";
+		}
 		
+		std::cout<<std::setprecision(double_mp);
 		std::cout<<"\nHspcOut=[";
 		for(unsigned int i=0;i<N_swp;i++){
 			std::cout<<'[';

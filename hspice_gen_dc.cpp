@@ -33,13 +33,13 @@
 						  
 #include<iostream>//cout
 #include<fstream>//std::fstream;
-#include <limits>
-#include <iomanip>
+#include <limits>//numeric_limits;
+#include <iomanip>//setprecision;
 
-#define M 3
-#define N 2
+//#define M 10
+//#define N 4
 
-#define N_swp 2
+//#define N_swp 5
 
 #define R_wl 5
 #define R_bl 5
@@ -50,16 +50,16 @@
 
 #define buff_sz 256
 #define gen_ofn(pchar_buf,m,n,n_swp) sprintf(pchar_buf,"./hspice/%dx%d_%d_dc_sweep_gen",m,n,n_swp);
-#define data_fl_nm "tst.csv"
+//#define data_fl_nm "tst.csv"
 
 int main(int argc, char** argv){
-	//unsigned int M,N,N_swp; char* dt_fn;
+	unsigned int M,N,N_swp; char* data_fl_nm;
 	if(argc<5){
-		//std::cout<<"\nusage: [exec_name] M N N_swp";
+		std::cout<<"\nusage: [exec_name] M N N_swp";
 	
-	//}
-	//else{
-	//	M=atoi(argv[1]); N=atoi(argv[2]); N_swp=atoi(argv[3]); dt_fn=argv[4];
+	}
+	else{
+		M=atoi(argv[1]); N=atoi(argv[2]); N_swp=atoi(argv[3]); data_fl_nm=argv[4];
 	unsigned int** Rstrs=new unsigned int*[M*N];//can be large array, so allocate memory for it in heap;
 	for(unsigned int i=0;i<M*N;i++){
 		Rstrs[i]=new unsigned int[M*N];
@@ -170,6 +170,7 @@ int main(int argc, char** argv){
 			
 		
 		}
+		ofs_data.close();
 		
 	}
 	else{
