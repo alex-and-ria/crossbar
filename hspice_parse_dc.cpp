@@ -54,7 +54,12 @@ int main(int argc, char** argv){
 
 	std::fstream ifs(ifn,std::fstream::in);
 	char ifs_buff[buff_sz]; char q;
-	double voltages[2*M*N+M+1][N_swp];
+	double **voltages=new double*[2*M*N+M+1];//define array on heap to avoid using all stack;
+	for(unsigned int i=0;i<(2*M*N+M+1);i++){
+		voltages[i]=new double[N_swp];
+	
+	}
+	//double voltages[2*M*N+M+1][N_swp];
 	if(ifs.is_open()){
 		ifs.getline(ifs_buff,buff_sz);
 		while(!ifs.eof()&&strstr(ifs_buff,"dc transfer curves")==NULL){//skip title untill node voltages is listed;
@@ -142,7 +147,13 @@ fin_parse:
 		std::cout<<"\nifs.is_open()";
 	
 	}
+	for(unsigned int i=0;i<(2*M*N+M+1);i++){
+		delete[] voltages[i];
+	
 	}
+	delete[] voltages;
+	}
+	
 
 
 	return 0;

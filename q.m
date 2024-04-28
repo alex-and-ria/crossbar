@@ -25,11 +25,11 @@
 %Gm=sym(zeros(2*dim*dim));
 fl_sprs=1;
 
-m=3; n=3;
-Cnds=[[1.41445e-05,2.74296e-05,2.10009e-05];[9.58681e-05,1.17854e-05,0.000392311];
-    [1.99132e-05,1.96282e-05,1.04814e-05]]; Gwl=0.2; Gbl=0.2;
- Vin=[[50,31,56];[21,18,7]];
-HspcOut=[[49.9844,0.0457723,49.9723,0.0296753,49.9671,0.138938,30.9232,0.0422405,30.8613,0.0228258,30.8011,0.133706,55.986,0.0239062,55.9776,0.0141591,55.9747,0.0683178];[20.9934,0.0223386,20.9884,0.011428,20.9862,0.0768214,17.9554,0.0208555,17.9194,0.008551,17.8845,0.0746259,6.9983,0.0107756,6.9972,0.0046186,6.9968,0.0374953]];
+% m=3; n=3;
+% Cnds=[[1.41445e-05,2.74296e-05,2.10009e-05];[9.58681e-05,1.17854e-05,0.000392311];
+%     [1.99132e-05,1.96282e-05,1.04814e-05]]; Gwl=0.2; Gbl=0.2;
+%  Vin=[[50,31,56];[21,18,7]];
+% HspcOut=[[49.9844,0.0457723,49.9723,0.0296753,49.9671,0.138938,30.9232,0.0422405,30.8613,0.0228258,30.8011,0.133706,55.986,0.0239062,55.9776,0.0141591,55.9747,0.0683178];[20.9934,0.0223386,20.9884,0.011428,20.9862,0.0768214,17.9554,0.0208555,17.9194,0.008551,17.8845,0.0746259,6.9983,0.0107756,6.9972,0.0046186,6.9968,0.0374953]];
 N_swp=size(HspcOut,1);
 Ivec=zeros(size(HspcOut));
 if (fl_sprs==0)
@@ -131,7 +131,9 @@ for(kk=1:N_swp)
     end
 end
 %disp(times_lu);
-fprintf("lu_decomp_t=%g, lu_solv_t=%g, lu_max_abs_err=%g\n", lu_decomp_t,lu_solv_t,lu_max_abs_err);
+%fprintf("lu_decomp_t=%g, lu_solv_t=%g, lu_max_abs_err=%g\n", lu_decomp_t,lu_solv_t,lu_max_abs_err);
+fprintf("%f %f ", lu_decomp_t,lu_solv_t);
+
 
 % disp('ldl');
 %     tic(); dA = decomposition(Gm,'ldl','upper'); toc();
@@ -147,7 +149,7 @@ fprintf("lu_decomp_t=%g, lu_solv_t=%g, lu_max_abs_err=%g\n", lu_decomp_t,lu_solv
 % end
 % disp(times_ldl);
 % fprintf("max_abs_err=%g\n", max_abs_err);
-
+if(2*m*n<100)
 lib_lu_decomp_t=0; lib_lu_solv_t=0; lib_lu_max_abs_err=0;
 tst_L=zeros(2*m*n,2*m*n); tst_U=zeros(2*m*n,2*m*n); tst_P=1:2*m*n;
 ptst_M=libpointer('doublePtr',full(Gm)'); ptst_L=libpointer('doublePtr',tst_L); ptst_U=libpointer('doublePtr',tst_U); ptst_P=libpointer('uint32Ptr',tst_P');
@@ -165,8 +167,12 @@ for(kk=1:N_swp)
     end
 end
 %disp(times_lu);
-fprintf("lib_lu_decomp_t=%g, lib_lu_solv_t=%g, lib_lu_max_abs_err=%g\n", lib_lu_decomp_t,lib_lu_solv_t,lib_lu_max_abs_err);
+%fprintf("lib_lu_decomp_t=%g, lib_lu_solv_t=%g, lib_lu_max_abs_err=%g\n", lib_lu_decomp_t,lib_lu_solv_t,lib_lu_max_abs_err);
+fprintf("%f %f\n", lib_lu_decomp_t,lib_lu_solv_t);
 
+else
+fprintf("%f %f\n", 0,0);
+end
 
 %tic(); ldl_x2=dA\Ivec(2)'; toc();
 %figure(2); plot(1:2*m*n,abs(ldl_x2'-HspcOut(2,:)));
